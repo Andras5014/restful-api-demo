@@ -27,6 +27,13 @@ type HostSet struct {
 	Total int     `json:"total"`
 }
 
+func NewHost() *Host {
+	return &Host{
+		Resource: &Resource{},
+		Describe: &Describe{},
+	}
+}
+
 // Host 模型的定义
 type Host struct {
 	*Resource //资源公共属性部分
