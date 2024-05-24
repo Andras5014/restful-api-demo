@@ -1,19 +1,51 @@
 package conf
 
-import "sync"
+// config 全局config对象
+var config *Config
+
+// GetConfig 全局Config对象获取
+func GetConfig() *Config {
+	return config
+}
+
+// NewDefaultConfig 初始化默认配置
+func NewDefaultConfig() *Config {
+	return &Config{
+		App:   NewDefaultApp(),
+		Log:   NewDefaultLog(),
+		MySQL: NewDefaultMySQL(),
+	}
+}
 
 // Config 应用配置
 type Config struct {
-	App   *app   `toml:"app"`
+	App   *App   `toml:"App"`
 	Log   *Log   `toml:"log"`
 	MySQL *MySQL `toml:"mysql"`
 }
 
-type app struct {
+func NewDefaultApp() *App {
+	return &App{
+		Name: "default",
+		Host: "127.0.0.1",
+		Port: "8080",
+		Key:  "123456",
+	}
+}
+
+type App struct {
 	Name string `toml:"name" env:"APP_NAME"`
 	Host string `toml:"host" env:"APP_HOST"`
 	Port string `toml:"port" env:"APP_PORT"`
 	Key  string `toml:"key" env:"APP_KEY"`
+}
+
+func NewDefaultLog() *Log {
+	return &Log{
+		Level:  "info",
+		Format: TextFormat,
+		To:     StdoutLogTo,
+	}
 }
 
 // Log todo
@@ -22,6 +54,18 @@ type Log struct {
 	PathDir string    `toml:"path_dir" env:"LOG_PATH_DIR"`
 	Format  LogFormat `toml:"format" env:"LOG_FORMAT"`
 	To      LogTo     `toml:"to" env:"LOG_TO"`
+}
+
+func NewDefaultMySQL() *MySQL {
+	return &MySQL{
+		Host:        "127.0.0.1",
+		Port:        "3306",
+		UserName:    "root",
+		Password:    "123456",
+		Database:    "test",
+		MaxOpenConn: 10,
+		MaxIdleConn: 5,
+	}
 }
 
 // MySQL todo
@@ -35,5 +79,4 @@ type MySQL struct {
 	MaxIdleConn int    `toml:"max_idle_conn" env:"MYSQL_MAX_IDLE_CONN"`
 	MaxLifeTime int    `toml:"max_life_time" env:"MYSQL_MAX_LIFE_TIME"`
 	MaxIdleTime int    `toml:"max_idle_time" env:"MYSQL_MAX_idle_TIME"`
-	lock        sync.Mutex
 }
